@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_restplus import Api
-from app.apis.namespaces.resource_1.endpoints import api as resource_1
+from app.apis.namespaces.resourceOne.endpoints import api as resourceOne
 
 
 blueprint = Blueprint("v1", __name__, url_prefix="/api/v1")
@@ -12,4 +12,4 @@ api = Api(
     description="CRUD on resources",
 )
 
-api.add_namespace(resource_1)
+api.add_namespace(resourceOne)

@@ -1,28 +1,28 @@
 from flask_restplus import fields
 
 
-resource_1 = {
+resourceOne = {
     "uuid": fields.String(
         required=True,
-        description="Resource 1 identifier",
+        description="resourceOne identifier",
     ),
     "name": fields.String(
         required=True,
-        description="Resource 1 name",
+        description="resourceOne name",
     ),
     "description": fields.String(
         required=False,
-        description="Resource 1 description",
+        description="resourceOne description",
     ),
 }
 
-resource_1_request = {
+resourceOne_request = {
     "name": fields.String(
         required=True,
-        description="Resource 1 name",
+        description="resourceOne name",
     ),
     "description": fields.String(
         required=False,
-        description="Resource 1 description",
+        description="resourceOne description",
     ),
 }

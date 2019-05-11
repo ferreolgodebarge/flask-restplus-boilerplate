@@ -11,7 +11,7 @@ def create_app():
     db.init_app(app)
 
     # Init apis
-    import app.apis as apis
+    import app.apis.blueprints as apis
     apis.init_app(app)
 
     return app
