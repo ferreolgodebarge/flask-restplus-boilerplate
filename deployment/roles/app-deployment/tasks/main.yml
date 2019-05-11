@@ -1,0 +1,7 @@
+---
+# tasks file for app-deployment
+- name: "Coppy app to target path"
+  unarchive:
+    src: "{{ app_src }}"
+    dest: "{{ app_deploy_dest }}"
+

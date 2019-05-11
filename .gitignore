@@ -2,3 +2,9 @@ venv/
 devenv/
 .vscode/
 __pycache__/
+*error.log*
+*access.log*
+*.pid
+ci.sh
+artifacts/
+acc

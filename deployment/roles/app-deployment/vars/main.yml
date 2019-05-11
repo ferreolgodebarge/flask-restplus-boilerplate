@@ -1,0 +1,4 @@
+---
+# vars file for app-deployment
+app_src: "{{ lookup('env', 'PACKAGE_PATH') }}"
+app_deploy_dest: "{{ lookup('env', 'APP_PATH') }}"

@@ -1,0 +1,7 @@
+[all]
+localhost
+
+[all:vars]
+ansible_connection=ssh
+ansible_user=ferreol
+ansible_ssh_pass="{{ lookup('env','SSH_PASSWORD') }}"
