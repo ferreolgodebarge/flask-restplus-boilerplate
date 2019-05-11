@@ -1,12 +1,22 @@
 ---
 # tasks file for app-deployment
 
-- name: "Create target app directory"
+- name: "Create target source directory"
   file:
     path: "{{ app_deploy_dest }}"
     state: directory
 
-- name: "Unarchive app into target app directory"
+- name: "Create target current directory"
+  file:
+    path: "{{ symlink_path }}/current"
+    state: directory
+
+- name: "Create target old directory"
+  file:
+    path: "{{ symlink_path }}/old"
+    state: directory
+
+- name: "Unarchive app into target source directory"
   unarchive:
     src: "{{ app_src }}"
     dest: "{{ app_deploy_dest }}"
@@ -78,12 +88,9 @@
   ignore_errors: yes
   register: gunicorn_runs
 
-- debug: var=gunicorn_runs
-
 - name: "Send reload signal to process if exists"
   shell: "kill -HUP {{ gunicorn_pid.stdout }}"
   when: (gunicorn_pid_file.stat.exists and gunicorn_runs.rc == 0)
-
 
 - name: "Run gunicorn if gunicorn.pid doesn't exist"
   shell: "env/bin/gunicorn -c app/config/gunicorn.py app.__init__:app"
