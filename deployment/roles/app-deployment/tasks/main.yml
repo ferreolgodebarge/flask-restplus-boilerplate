@@ -61,22 +61,32 @@
 - stat: "path={{ symlink_path }}/old/app/pids/gunicorn.pid"
   register: gunicorn_pid_file
 
-- debug: var=gunicorn_pid_file
-
-- name: "Copy gunicorn.pid in the new version folder"
+- name: "Copy gunicorn.pid in the new version folder if exists"
   copy:
     src: "{{ symlink_path }}/old/app/pids/gunicorn.pid"
     dest: "{{ symlink_path }}/current/app/pids/gunicorn.pid"
     remote_src: yes
   when: gunicorn_pid_file.stat.exists
 
-- name: "Get content of gunicorn.pid"
+- name: "Get content of gunicorn.pid if exists"
   shell: "cat {{ gunicorn_pid_file.stat.path }}"
   register: gunicorn_pid
   when: gunicorn_pid_file.stat.exists
 
-- debug: var=gunicorn_pid
+- name: "Verify if a gunicorn process is running"
+  shell: "pgrep gunicorn"
+  ignore_errors: yes
+  register: gunicorn_runs
 
-- name: "Send reload signal to process"
+- debug: var=gunicorn_runs
+
+- name: "Send reload signal to process if exists"
   shell: "kill -HUP {{ gunicorn_pid.stdout }}"
-  when: gunicorn_pid_file.stat.exists
+  when: (gunicorn_pid_file.stat.exists and gunicorn_runs.rc == 0)
+
+
+- name: "Run gunicorn if gunicorn.pid doesn't exist"
+  shell: "env/bin/gunicorn -c app/config/gunicorn.py app.__init__:app"
+  args:
+    chdir: "{{ symlink_path }}/current"
+  when: not (gunicorn_pid_file.stat.exists and gunicorn_runs.rc == 0)
