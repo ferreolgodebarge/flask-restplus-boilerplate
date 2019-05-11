@@ -1,5 +1,10 @@
 ---
 # tasks file for app-deployment
+- name: "Create app new version directory"
+  files:
+    path: "{{ app_deploy_dest }}"
+    state: directory
+
 - name: "Coppy app to target path"
   unarchive:
     src: "{{ app_src }}"
