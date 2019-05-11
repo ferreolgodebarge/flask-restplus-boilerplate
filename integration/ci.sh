@@ -30,4 +30,4 @@ export ENV_PATH=~/temp/server/source/environments/$next
 export SYMLINK_PATH=~/application/run
 
 # Trigger the CD
-ansible-playbook -i ${PWD}/deployment/inventories/local/hosts ${PWD}/deployment/app.yml
+ansible-playbook -i ${PWD}/deployment/inventories/local/hosts ${PWD}/deployment/deployment.yml

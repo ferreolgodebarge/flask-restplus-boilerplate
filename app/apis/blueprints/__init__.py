@@ -6,5 +6,8 @@ def import_blueprints(blueprints):
 
 
 def init_app(app):
+    app.config['VERSIONS'] = [
+        version for version in app.config['VERSIONS'].replace(
+            " ", "").split(',')]
     for blueprint in import_blueprints(app.config['VERSIONS']):
         app.register_blueprint(blueprint)

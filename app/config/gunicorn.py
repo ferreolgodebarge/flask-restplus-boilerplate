@@ -20,11 +20,5 @@ reload = False
 
 # Logs
 loglevel = "debug"
-accesslog = os.environ.get(
-    "ACCESS_LOG_FILES",
-    "{}/app/logs/{}-access.log".format(os.getcwd(), proc_name),
-)
-errorlog = os.environ.get(
-    "ERROR_LOG_FILES",
-    "{}/app/logs/{}-error.log".format(os.getcwd(), proc_name),
-)
+accesslog = "{}/app/logs/{}-access.log".format(os.getcwd(), proc_name)
+errorlog = "{}/app/logs/{}-error.log".format(os.getcwd(), proc_name)

@@ -1,10 +1,14 @@
 ---
 # vars file for app-deployment
 
-# Source code deployment
+# Source code deployment - do not touch
 app_src: "{{ lookup('env', 'REPOSITORY_APP_PATH') }}"
 app_deploy_dest: "{{ lookup('env', 'APP_PATH') }}"
 env_deploy_dest: "{{ lookup('env', 'ENV_PATH') }}"
 
-# Symlink definitions
+# Symlink definitions - do not touch
 symlink_path: "{{ lookup('env', 'SYMLINK_PATH') }}"
+
+# Environment variables for the application
+env_vars:
+  VERSIONS: "v1"

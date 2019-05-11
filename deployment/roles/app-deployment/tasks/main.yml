@@ -88,6 +88,11 @@
   ignore_errors: yes
   register: gunicorn_runs
 
+- name: "Create settings.cfg file containing all environment variables"
+  template:
+    src: settings.j2
+    dest: "{{ symlink_path }}/current/app/config/settings.cfg"
+
 - name: "Send reload signal to process if exists"
   shell: "kill -HUP {{ gunicorn_pid.stdout }}"
   when: (gunicorn_pid_file.stat.exists and gunicorn_runs.rc == 0)
@@ -96,4 +101,6 @@
   shell: "env/bin/gunicorn -c app/config/gunicorn.py app.__init__:app"
   args:
     chdir: "{{ symlink_path }}/current"
+  environment: 
+    APP_CONF_PATH: "{{ symlink_path }}/current/app/config/settings.cfg"
   when: not (gunicorn_pid_file.stat.exists and gunicorn_runs.rc == 0)

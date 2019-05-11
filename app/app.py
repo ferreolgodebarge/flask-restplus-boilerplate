@@ -4,8 +4,8 @@ def create_app():
     app = Flask(__name__)
 
     # Import configurations
-    app.config.from_object('app.config.conf')
-
+    app.config.from_envvar('APP_CONF_PATH')
+    
     # Init database
     import app.models as db
     db.init_app(app)
