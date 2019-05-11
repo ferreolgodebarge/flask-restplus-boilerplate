@@ -3,5 +3,5 @@ localhost
 
 [all:vars]
 ansible_connection=ssh
-ansible_user=ferreol
+ansible_user="{{ lookup('env','SSH_USERNAME') }}"
 ansible_ssh_pass="{{ lookup('env','SSH_PASSWORD') }}"

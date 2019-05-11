@@ -16,12 +16,13 @@ next=$(($number+1))
 mkdir -p ${PWD}/integration/artifacts/app
 
 # Compress the next version package
-tar -cvzf ${PWD}/integration/artifacts/app/$next.tar.gz app/
+tar -czf ${PWD}/integration/artifacts/app/$next.tar.gz app/
 
 # Increase the version to store which one will be deployed
 echo $next > ${PWD}/integration/acc
 
 # Set environment variables mandatory to the CD
+export SSH_USERNAME=$SSH_USER
 export SSH_PASSWORD=$SSH_PASS
 export REPOSITORY_APP_PATH=${PWD}/integration/artifacts/app/$next.tar.gz
 export APP_PATH=~/application/source/deploys/$next
