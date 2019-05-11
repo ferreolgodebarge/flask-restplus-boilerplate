@@ -13,7 +13,7 @@ def list_resource_1():
     return response
 
 
-def get_resource_1(uuid):
+def read_resource_1(uuid):
     resource = Resource_1.query.filter_by(uuid=uuid).first()
     if resource:
         return resource.to_dict()

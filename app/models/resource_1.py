@@ -1,4 +1,4 @@
-from models import db
+from app.models import db
 
 
 class Resource_1(db.Model):
@@ -15,5 +15,5 @@ class Resource_1(db.Model):
         return {
             "id": self.uuid,
             "name": self.name,
-            "description": self.description
+            "description": self.description,
         }
