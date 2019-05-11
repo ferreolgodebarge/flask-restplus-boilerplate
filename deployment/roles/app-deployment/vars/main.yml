@@ -1,4 +1,10 @@
 ---
 # vars file for app-deployment
-app_src: "{{ lookup('env', 'PACKAGE_PATH') }}"
+
+# Source code deployment
+app_src: "{{ lookup('env', 'REPOSITORY_APP_PATH') }}"
 app_deploy_dest: "{{ lookup('env', 'APP_PATH') }}"
+env_deploy_dest: "{{ lookup('env', 'ENV_PATH') }}"
+
+# Symlink definitions
+symlink_path: "{{ lookup('env', 'SYMLINK_PATH') }}"

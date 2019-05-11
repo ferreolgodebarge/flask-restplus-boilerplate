@@ -1,12 +1,82 @@
 ---
 # tasks file for app-deployment
-- name: "Create app new version directory"
-  files:
+
+- name: "Create target app directory"
+  file:
     path: "{{ app_deploy_dest }}"
     state: directory
 
-- name: "Coppy app to target path"
+- name: "Unarchive app into target app directory"
   unarchive:
     src: "{{ app_src }}"
     dest: "{{ app_deploy_dest }}"
+    extra_opts: [--strip-components=1]
 
+- name: "Create a virtualenv"
+  shell: "virtualenv {{ env_deploy_dest }}"
+
+- name: "Install pip requirements"
+  pip:
+    requirements: "{{ app_deploy_dest }}/requirements.txt"
+    virtualenv: "{{ env_deploy_dest }}"
+
+- stat: "path={{ symlink_path }}/current/app"
+  register: previous_app_path
+
+- name: "Create previous symlink for the previous version in case of rollback"
+  file:
+    src: "{{ previous_app_path.stat.lnk_target }}"
+    dest: "{{ symlink_path }}/old/app"
+    state: link
+  when: (previous_app_path.stat.lnk_target is defined)
+
+- name: "Change current symlink from previous to new version"
+  file:
+    src: "{{ app_deploy_dest }}"
+    dest: "{{ symlink_path }}/current/app"
+    state: link
+
+- stat: "path={{ symlink_path }}/current/app"
+  register: current_app_path
+
+- stat: "path={{ symlink_path }}/current/env"
+  register: previous_env_path
+
+- name: "Create previous symlink for the previous version in case of rollback"
+  file:
+    src: "{{ previous_env_path.stat.lnk_target }}"
+    dest: "{{ symlink_path }}/old/env"
+    state: link
+  when: (previous_env_path.stat.lnk_target is defined)
+
+- name: "Change current symlink from previous to new version"
+  file:
+    src: "{{ env_deploy_dest }}"
+    dest: "{{ symlink_path }}/current/env"
+    state: link
+
+- stat: "path={{ symlink_path }}/current/env"
+  register: current_env_path
+
+- stat: "path={{ symlink_path }}/old/app/pids/gunicorn.pid"
+  register: gunicorn_pid_file
+
+- debug: var=gunicorn_pid_file
+
+- name: "Copy gunicorn.pid in the new version folder"
+  copy:
+    src: "{{ symlink_path }}/old/app/pids/gunicorn.pid"
+    dest: "{{ symlink_path }}/current/app/pids/gunicorn.pid"
+    remote_src: yes
+  when: gunicorn_pid_file.stat.exists
+
+- name: "Get content of gunicorn.pid"
+  shell: "cat {{ gunicorn_pid_file.stat.path }}"
+  register: gunicorn_pid
+  when: gunicorn_pid_file.stat.exists
+
+- debug: var=gunicorn_pid
+
+- name: "Send reload signal to process"
+  shell: "kill -HUP {{ gunicorn_pid.stdout }}"
+  when: gunicorn_pid_file.stat.exists
