@@ -26,7 +26,7 @@ export SSH_USERNAME=$SSH_USER
 export SSH_PASSWORD=$SSH_PASS
 export REPOSITORY_APP_PATH=${PWD}/integration/artifacts/app/$next.tar.gz
 export APP_PATH=~/application/source/deploys/$next
-export ENV_PATH=~/temp/server/source/environments/$next
+export ENV_PATH=~/application/source/environments/$next
 export SYMLINK_PATH=~/application/run
 
 # Trigger the CD

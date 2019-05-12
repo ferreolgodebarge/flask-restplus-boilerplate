@@ -5,7 +5,7 @@ def create_app():
 
     # Import configurations
     app.config.from_envvar('APP_CONF_PATH')
-    
+
     # Init database
     import app.models as db
     db.init_app(app)

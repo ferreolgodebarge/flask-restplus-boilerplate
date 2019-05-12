@@ -1,0 +1,6 @@
+---
+# debug: "msg=reciedved"
+
+- name: "new service version deployed"
+  import_tasks: "tasks/healthcheck.yml"
+  listen: "new service version deployed"

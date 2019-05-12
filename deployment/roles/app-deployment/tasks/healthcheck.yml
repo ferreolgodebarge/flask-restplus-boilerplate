@@ -1,0 +1,29 @@
+---
+# tasks file for app-deployment
+
+- name: "Verify the gunicorn process is still running"
+  shell: "pgrep -F {{ gunicorn_pid_file.stat.path }}"
+  ignore_errors: yes
+  register: gunicorn_runs_validation
+
+# - debug: "var=gunicorn_runs_validation"
+#   when: "gunicorn_runs_validation.rc != 0"
+
+- set_fact:
+    tests_passed: true
+  when: "gunicorn_runs_validation.rc != 0"
+
+- debug: "var=hostvars"
+
+- name: "Verify new application HTTP response"
+  uri:
+    url: http://127.0.0.1:5000/api/v1
+    return_content: yes
+  register: this
+
+- debug: "var=this"
+  when: "this.status != 200"
+
+# - debug: msg="A test has failed"
+#   notify: "at least a test has failed"
+#   when: 
