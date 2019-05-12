@@ -11,7 +11,7 @@ graceful_timeout = 30
 
 # Processes
 proc_name = 'gunicorn'
-pidfile = "{}/app/pids/{}.pid".format(os.getcwd(), proc_name)
+pidfile = "{}.pid".format(os.getcwd())
 workers = multiprocessing.cpu_count() * 2 + 1
 daemon = True
 check_config = False
@@ -20,5 +20,5 @@ reload = False
 
 # Logs
 loglevel = "debug"
-accesslog = "{}/app/logs/{}-access.log".format(os.getcwd(), proc_name)
-errorlog = "{}/app/logs/{}-error.log".format(os.getcwd(), proc_name)
+accesslog = "{}-access.log".format(os.getcwd())
+errorlog = "{}-error.log".format(os.getcwd())

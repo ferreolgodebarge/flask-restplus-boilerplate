@@ -11,4 +11,4 @@ symlink_path: "{{ lookup('env', 'SYMLINK_PATH') }}"
 
 # Environment variables for the application
 env_vars:
-  VERSIONS: "v1"
+  VERSIONS: "version,v1"

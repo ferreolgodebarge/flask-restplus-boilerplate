@@ -68,15 +68,8 @@
 - stat: "path={{ symlink_path }}/current/env"
   register: current_env_path
 
-- stat: "path={{ symlink_path }}/old/app/pids/gunicorn.pid"
+- stat: "path={{ symlink_path }}/current.pid"
   register: gunicorn_pid_file
-
-- name: "Copy gunicorn.pid in the new version folder if exists"
-  copy:
-    src: "{{ symlink_path }}/old/app/pids/gunicorn.pid"
-    dest: "{{ symlink_path }}/current/app/pids/gunicorn.pid"
-    remote_src: yes
-  when: gunicorn_pid_file.stat.exists
 
 - name: "Get content of gunicorn.pid if exists"
   shell: "cat {{ gunicorn_pid_file.stat.path }}"
