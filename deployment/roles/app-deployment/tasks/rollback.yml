@@ -1,0 +1,57 @@
+---
+# tasks file for app-deployment
+
+- name: "Create old app symlink for the previous version in case of rollback"
+  file:
+    src: "{{ previous_app_path.stat.lnk_source }}"
+    dest: "{{ symlink_path }}/current/app"
+    state: link
+  register: app_rollbacked
+  when: previous_app_path.stat.exists
+
+- name: "Create previous env symlink for the previous version in case of rollback"
+  file:
+    src: "{{ previous_env_path.stat.lnk_source }}"
+    dest: "{{ symlink_path }}/current/env"
+    state: link
+  register: env_rollbacked
+  when: previous_env_path.stat.exists
+
+
+- name: "Check if current.pid file exists"
+  stat:
+    path: "{{ symlink_path }}/current.pid"
+  register: rollback_pid_file_check
+  when: previous_app_path.stat.exists and previous_env_path.stat.exists
+
+- name: "Check if the process corresponding to pid runs"
+  shell: "pgrep -F {{ rollback_pid_file_check.stat.path }}"
+  register: rollback_pid_process_runs_check
+  ignore_errors: yes
+  changed_when: False
+  when: (rollback_pid_file_check is defined and rollback_pid_file_check.stat.exists)
+
+- name: "Run gunicorn if gunicorn.pid doesn't exist"
+  shell: "env/bin/gunicorn -c app/config/gunicorn.py app.__init__:app"
+  args:
+    chdir: "{{ symlink_path }}/current"
+  environment: 
+    APP_CONF_PATH: "{{ symlink_path }}/current/settings.cfg"
+  when: not (rollback_pid_file_check.stat.exists)
+
+- name: "Send reload signal to process if exists"
+  shell: "kill -HUP {{ rollback_pid_process_runs_check.stdout }}"
+  register: "reload_rollback"
+  when: (rollback_pid_file_check.stat.exists) and (rollback_pid_process_runs_check.rc == 0)
+
+- debug: "var=reload_rollback"
+
+# - name: "Failing message if rollback succeeded"
+#   fail:
+#     msg: "Rollback succeded, previous version restarted"
+#   when: (app_rollbacked is defined) and (previous_env_path)
+
+# - name: "Failing message if rollback failed"
+#   fail:
+#     msg: "Rollback failed, you need to verify on the server"
+#   when: not ((app_rollbacked is defined) and (previous_env_path))

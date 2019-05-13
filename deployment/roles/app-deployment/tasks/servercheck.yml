@@ -18,7 +18,7 @@
 - debug: "var=current_pid_process_runs_check.rc"
 
 - name: "Check if the current pid process uses the target port"
-  shell: "netstat -laputen | grep {{ current_pid_process_runs_check.stdout }} | grep ':5000[[:space:]]'"
+  shell: "lsof -Ri | grep '[[:space:]]1[[:space:]]' | grep '[[:space:]]{{ current_pid_process_runs_check.stdout }}[[:space:]]' | grep ':5000[[:space:]]'"
   register: current_pid_port_check
   ignore_errors: yes
   changed_when: False
@@ -31,7 +31,7 @@
   register: port_already_in_use_check
   failed_when: (port_already_in_use_check.rc == 0)
   changed_when: False
-  when: not (current_pid_port_check.rc is defined)
+  when: not (current_pid_port_check is defined and current_pid_port_check.rc == 0)
 
 - debug: "var=port_already_in_use_check.rc"
 
@@ -51,9 +51,9 @@
   debug: "var=previous_env_path.stat.lnk_source"
   when: previous_env_path.stat.exists
 
-- name: "Unable to deploy, port is already used by another process"
-  fail: msg="Unable to deploy, port is already used by another process"
-  when: not (port_already_in_use_check is defined)
+# - name: "Unable to deploy, port is already used by another process"
+#   fail: msg="Unable to deploy, port is already used by another process"
+#   when: not (port_already_in_use_check is defined)
 
 - name: "Run gunicorn for the first time"
   include: "start.yml"
