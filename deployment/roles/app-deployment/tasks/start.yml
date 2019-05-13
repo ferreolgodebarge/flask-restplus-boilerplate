@@ -1,0 +1,13 @@
+---
+# tasks file for app-deployment
+
+- name: "Deploy new code"
+  include: "deployment.yml"
+
+- name: "Run gunicorn if gunicorn.pid doesn't exist"
+  shell: "env/bin/gunicorn -c app/config/gunicorn.py app.__init__:app"
+  args:
+    chdir: "{{ symlink_path }}/current"
+  environment: 
+    APP_CONF_PATH: "{{ symlink_path }}/current/settings.cfg"
+  notify: "new service version deployed"

@@ -22,6 +22,11 @@
     dest: "{{ app_deploy_dest }}"
     extra_opts: [--strip-components=1]
 
+- name: "Create settings.cfg file containing all environment variables"
+  template:
+    src: settings.j2
+    dest: "{{ symlink_path }}/current/settings.cfg"
+
 - name: "Create a virtualenv"
   shell: "virtualenv {{ env_deploy_dest }}"
 
@@ -30,72 +35,28 @@
     requirements: "{{ app_deploy_dest }}/requirements.txt"
     virtualenv: "{{ env_deploy_dest }}"
 
-- stat: "path={{ symlink_path }}/current/app"
-  register: previous_app_path
-
-- name: "Create previous symlink for the previous version in case of rollback"
+- name: "Create old app symlink for the previous version in case of rollback"
   file:
-    src: "{{ previous_app_path.stat.lnk_target }}"
+    src: "{{ previous_app_path.stat.lnk_source }}"
     dest: "{{ symlink_path }}/old/app"
     state: link
-  when: (previous_app_path.stat.lnk_target is defined)
+  when: (previous_app_path.stat.lnk_source is defined)
 
-- name: "Change current symlink from previous to new version"
+- name: "Change current app symlink from previous to new version"
   file:
     src: "{{ app_deploy_dest }}"
     dest: "{{ symlink_path }}/current/app"
     state: link
 
-- stat: "path={{ symlink_path }}/current/app"
-  register: current_app_path
-
-- stat: "path={{ symlink_path }}/current/env"
-  register: previous_env_path
-
-- name: "Create previous symlink for the previous version in case of rollback"
+- name: "Create previous env symlink for the previous version in case of rollback"
   file:
-    src: "{{ previous_env_path.stat.lnk_target }}"
+    src: "{{ previous_env_path.stat.lnk_source }}"
     dest: "{{ symlink_path }}/old/env"
     state: link
-  when: (previous_env_path.stat.lnk_target is defined)
+  when: (previous_env_path.stat.lnk_source is defined)
 
-- name: "Change current symlink from previous to new version"
+- name: "Change current env symlink from previous to new version"
   file:
     src: "{{ env_deploy_dest }}"
     dest: "{{ symlink_path }}/current/env"
     state: link
-
-- stat: "path={{ symlink_path }}/current/env"
-  register: current_env_path
-
-- stat: "path={{ symlink_path }}/current.pid"
-  register: gunicorn_pid_file
-
-- name: "Get content of gunicorn.pid if exists"
-  shell: "cat {{ gunicorn_pid_file.stat.path }}"
-  register: gunicorn_pid
-  when: gunicorn_pid_file.stat.exists
-
-- name: "Verify if the associated gunicorn process is running"
-  shell: "pgrep -F {{ gunicorn_pid_file.stat.path }}"
-  ignore_errors: yes
-  register: gunicorn_runs
-
-- name: "Create settings.cfg file containing all environment variables"
-  template:
-    src: settings.j2
-    dest: "{{ symlink_path }}/current/app/config/settings.cfg"
-
-- name: "Send reload signal to process if exists"
-  shell: "kill -HUP {{ gunicorn_pid.stdout }}"
-  notify: "new service version deployed"
-  when: (gunicorn_pid_file.stat.exists and gunicorn_runs.rc == 0)
-
-- name: "Run gunicorn if gunicorn.pid doesn't exist"
-  shell: "env/bin/gunicorn -c app/config/gunicorn.py app.__init__:app"
-  args:
-    chdir: "{{ symlink_path }}/current"
-  environment: 
-    APP_CONF_PATH: "{{ symlink_path }}/current/app/config/settings.cfg"
-  notify: "new service version deployed"
-  when: not (gunicorn_pid_file.stat.exists and gunicorn_runs.rc == 0)

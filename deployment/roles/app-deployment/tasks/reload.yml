@@ -1,0 +1,9 @@
+---
+# tasks file for app-deployment
+
+- name: "Deploy new code"
+  include: "deployment.yml"
+
+- name: "Send reload signal to process if exists"
+  shell: "kill -HUP {{ current_pid_process_runs_check.stdout }}"
+  notify: "new service version deployed"
