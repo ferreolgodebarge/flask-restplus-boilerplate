@@ -1,6 +1,8 @@
 ---
 # tasks file for app-deployment
 
-- name: "Run application deployment"
-  include: "deployment.yml"
+# - name: "Run application deployment"
+#   include: "deployment.yml"
 
+- name: "Check target server readiness"
+  include: "servercheck.yml"

@@ -1,0 +1,42 @@
+---
+# tasks file for app-deployment
+
+- name: "Check if current.pid file exists"
+  stat:
+    path: "{{ symlink_path }}/current.pid"
+  register: current_pid_file_check
+
+- debug: "var=current_pid_file_check.stat.exists"
+
+- name: "Check if the process corresponding to pid runs"
+  shell: "pgrep -F {{ current_pid_file_check.stat.path }}"
+  register: current_pid_process_runs_check
+  when: current_pid_file_check.stat.exists
+
+- debug: "var=current_pid_process_runs_check.rc"
+
+- name: "Check if the current pid process uses the target port"
+  shell: "netstat -laputen | grep {{ current_pid_process_runs_check.stdout }} | grep ':5000[[:space:]]'"
+  register: current_pid_port_check
+  when: current_pid_file_check.stat.exists
+
+- debug: "var=current_pid_port_check.rc"
+
+- name: "Check if another process uses the target port"
+  shell: "netstat -laputen | grep ':5000[[:space:]]'"
+  register: port_already_in_use_check
+  when: not (current_pid_file_check.stat.exists)
+
+- debug: "var=port_already_in_use_check.rc"
+
+- name: "Unable to deploy, port is already used by another process"
+  debug: msg="Unable to deploy, port is already used by another process"
+  when: not (port_already_in_use_check is defined)
+
+- name: "Runs gunicorn for the first time"
+  debug: msg="Runs gunicorn for the first time"
+  when: not (current_pid_file_check.stat.exists and port_already_in_use_check is defined)
+
+- name: "Reload gunicorn to change version"
+  debug: msg="Reload gunicorn to change version"
+  when: current_pid_file_check.stat.exists and (current_pid_process_runs_check.rc == 0)
