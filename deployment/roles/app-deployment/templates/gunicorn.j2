@@ -2,12 +2,12 @@ import os
 import multiprocessing
 
 # Network and connections
-bind = "0.0.0.0:5000"
-backlog = 2048
-worker_connections = 4098
-max_requests = 4098
-timeout = 30
-graceful_timeout = 30
+bind = "{{ binding_adress_port}}"
+backlog = {{ backlog }}
+worker_connections = {{ worker_connections }}
+max_requests = {{ max_requests }}
+timeout = {{ timeout }}
+graceful_timeout = {{ graceful_timeout }}
 
 # Processes
 proc_name = 'gunicorn'
@@ -19,6 +19,6 @@ preload_app = False
 reload = False
 
 # Logs
-loglevel = "debug"
+loglevel = "{{ loglevel }}"
 accesslog = "{}-access.log".format(os.getcwd())
 errorlog = "{}-error.log".format(os.getcwd())

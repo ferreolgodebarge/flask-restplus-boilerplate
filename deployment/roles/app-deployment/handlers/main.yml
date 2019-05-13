@@ -2,4 +2,4 @@
 # debug: "msg=reciedved"
 
 - name: "new service version deployed"
-  debug: msg="recieved"
+  import_tasks: "tasks/healthcheck.yml"

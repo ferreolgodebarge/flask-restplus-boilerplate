@@ -1,19 +1,21 @@
 ---
 # tasks file for app-deployment
 
-- name: "Verify the gunicorn process is still running"
-  shell: "pgrep -F {{ gunicorn_pid_file.stat.path }}"
+- name: "Check if current.pid file exists"
+  stat:
+    path: "{{ symlink_path }}/current.pid"
+  register: new_pid_file_check
+
+- debug: "var=new_pid_file_check.stat.exists"
+
+- name: "Check if the process corresponding to pid runs"
+  shell: "pgrep -F {{ new_pid_file_check.stat.path }}"
+  register: new_pid_process_runs_check
   ignore_errors: yes
-  register: gunicorn_runs_validation
+  changed_when: False
+  when: new_pid_file_check.stat.exists
 
-# - debug: "var=gunicorn_runs_validation"
-#   when: "gunicorn_runs_validation.rc != 0"
-
-- set_fact:
-    tests_passed: true
-  when: "gunicorn_runs_validation.rc != 0"
-
-- debug: "var=hostvars"
+- debug: "var=current_pid_process_runs_check.rc"
 
 - name: "Verify new application HTTP response"
   uri:
@@ -21,9 +23,7 @@
     return_content: yes
   register: this
 
-- debug: "var=this"
-  when: "this.status != 200"
+- debug: "var=this.status"
 
-# - debug: msg="A test has failed"
-#   notify: "at least a test has failed"
-#   when: 
+- debug: "var=this"
+  when: (this.status != 200) and (current_pid_process_runs_check.rc != 0)

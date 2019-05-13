@@ -27,6 +27,11 @@
     src: settings.j2
     dest: "{{ symlink_path }}/current/settings.cfg"
 
+- name: "Create gunicorn.py file containing server configuration"
+  template:
+    src: gunicorn.j2
+    dest: "{{ app_deploy_dest }}/config/gunicorn.py"
+
 - name: "Create a virtualenv"
   shell: "virtualenv {{ env_deploy_dest }}"
 

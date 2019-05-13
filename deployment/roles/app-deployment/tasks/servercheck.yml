@@ -29,7 +29,7 @@
 - name: "Check if another process uses the target port"
   shell: "netstat -laputen | grep ':5000[[:space:]]'"
   register: port_already_in_use_check
-  ignore_errors: yes
+  failed_when: (port_already_in_use_check.rc == 0)
   changed_when: False
   when: not (current_pid_port_check.rc is defined)
 
@@ -52,10 +52,10 @@
   when: previous_env_path.stat.exists
 
 - name: "Unable to deploy, port is already used by another process"
-  debug: msg="Unable to deploy, port is already used by another process"
+  fail: msg="Unable to deploy, port is already used by another process"
   when: not (port_already_in_use_check is defined)
 
-- name: "Runs gunicorn for the first time"
+- name: "Run gunicorn for the first time"
   include: "start.yml"
   when: not (current_pid_file_check.stat.exists and port_already_in_use_check is defined)
 

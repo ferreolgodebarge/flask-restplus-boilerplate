@@ -9,6 +9,15 @@ env_deploy_dest: "{{ lookup('env', 'ENV_PATH') }}"
 # Symlink definitions - do not touch
 symlink_path: "{{ lookup('env', 'SYMLINK_PATH') }}"
 
+# Gunicorn configuration
+binding_adress_port: "0.0.0.0:5000"
+backlog: 2048
+worker_connections: 4098
+max_requests: 4098
+timeout: 30
+graceful_timeout: 30
+loglevel: "debug"
+
 # Environment variables for the application
 env_vars:
   VERSIONS: "version,v1"
