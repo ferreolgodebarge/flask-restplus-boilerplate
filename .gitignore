@@ -7,3 +7,7 @@ __pycache__/
 *.pid
 artifacts/
 *.retry
+.coverage
+settings.cfg
+cov.xml
+.pytest_cache/
