@@ -27,7 +27,7 @@ def app_no_env_with_file():
         'test_files',
         'test_settings.cfg',
     )
-    settings = os.path.join(os.getcwd(), 'settings.cfg')
+    settings = os.path.join(os.getcwd(), '..', 'settings.cfg')
     shutil.copyfile(test_settings, settings)
     yield create_app()
     os.remove(settings)
@@ -47,7 +47,7 @@ def app_dev_with_config_file():
         'test_files',
         'test_settings.cfg',
     )
-    settings = os.path.join(os.getcwd(), 'settings.cfg')
+    settings = os.path.join(os.getcwd(), '..', 'settings.cfg')
     shutil.copyfile(test_settings, settings)
     yield create_app()
     os.remove(settings)
@@ -68,7 +68,7 @@ def client_v1():
         'test_files',
         'test_settings.cfg',
     )
-    settings = os.path.join(os.getcwd(), 'settings.cfg')
+    settings = os.path.join(os.getcwd(), '..', 'settings.cfg')
     shutil.copyfile(test_settings, settings)
     app = create_app()
     os.remove(settings)
@@ -84,7 +84,7 @@ def client_v1_backend_issue(monkeypatch):
         'test_files',
         'test_settings.cfg',
     )
-    settings = os.path.join(os.getcwd(), 'settings.cfg')
+    settings = os.path.join(os.getcwd(), '..', 'settings.cfg')
     shutil.copyfile(test_settings, settings)
     monkeypatch.setattr("application.models.init_app", lambda x: '')
     app = create_app()
