@@ -9,22 +9,26 @@ def create_app(
     app = Flask(__name__)
 
     # Load configuration
-    from . import config
+    from application import config
     config.init_app(app, config_file)
 
     # Init database
-    from .tools import database
+    from application.tools import database
     database.init_app(app)
 
     # Init Database tables
-    from . import models
+    from application import models
     models.init_app(app)
 
     # Init apis
-    from .apis import blueprints
+    from application.apis import blueprints
     blueprints.init_app(app)
 
     return app
 
 
 app = create_app()
+
+
+if __name__ == "__main__":
+    app.run()

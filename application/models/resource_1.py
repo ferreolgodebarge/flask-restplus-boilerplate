@@ -1,4 +1,4 @@
-from ..tools import db
+from application.tools import db
 
 
 class Resource_1(db.Model):

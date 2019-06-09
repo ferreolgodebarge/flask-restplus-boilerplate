@@ -1,7 +1,15 @@
 def import_blueprints(blueprints):
-    from importlib import import_module
-    blueprint_list = [getattr(import_module(
-        f"{__name__}.{blueprint}"), "blueprint") for blueprint in blueprints]
+    # from importlib import import_module
+    # print(__name__)
+    # blueprint_list = [getattr(import_module(
+    #     f"{__name__}.{blueprint}"
+    # ), "blueprint") for blueprint in blueprints]
+    from application.apis.blueprints.version import blueprint as version
+    from application.apis.blueprints.v1 import blueprint as v1
+    blueprint_list = [
+        version,
+        v1,
+    ]
     return blueprint_list
 
 
@@ -14,5 +22,6 @@ def init_app(app):
     if "version" not in app.config['VERSIONS']:
         app.config['VERSIONS'].append("version")
     for blueprint in import_blueprints(app.config['VERSIONS']):
-        app.register_blueprint(blueprint)
-        print(" * API version initialized : {}".format(blueprint.name))
+        if blueprint.name in app.config['VERSIONS']:
+            app.register_blueprint(blueprint)
+            print(" * API version initialized : {}".format(blueprint.name))

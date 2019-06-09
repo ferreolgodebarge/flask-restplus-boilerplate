@@ -11,3 +11,6 @@ artifacts/
 settings.cfg
 cov.xml
 .pytest_cache/
+dist/
+build/
+app.spec

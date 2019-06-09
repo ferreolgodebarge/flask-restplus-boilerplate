@@ -1,10 +1,10 @@
 from flask_restplus import Namespace, Resource
-from .models import (
+from application.apis.namespaces.resource_1.models import (
     resource_1,
     resource_1_request,
     error,
 )
-from ....core.resources.resource_1 import (
+from application.core.resources.resource_1 import (
     list_resource_1 as list_resource,
     create_resource_1 as create_resource,
     read_resource_1 as read_resource,

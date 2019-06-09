@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_restplus import Api
-from ..namespaces.version.endpoints import api as version
+from application.apis.namespaces.version.endpoints import api as version
 
 
 blueprint = Blueprint("version", __name__, url_prefix="/api")
