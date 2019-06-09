@@ -93,3 +93,9 @@ Configuration List:
 SQLALCHEMY_DATABASE_URI=''
 VERSIONS=''
 ```
+
+## Limitations
+
+PyInstaller cannot use jsonschema (version 3):
+
+So, you need to install jsonschema==2.6.0.
