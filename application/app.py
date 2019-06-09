@@ -2,7 +2,9 @@ import os
 
 
 def create_app(
-    config_file=os.path.join(os.getcwd(), 'settings.cfg'),
+    config_file=os.path.join(os.path.split(
+        os.path.split(os.path.realpath(__name__))[0])[0],
+        'settings.cfg'),
 ):
     # Init Flask app
     from flask import Flask
@@ -31,4 +33,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(use_reloader=False)
