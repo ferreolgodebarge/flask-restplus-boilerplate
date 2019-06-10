@@ -1,7 +1,20 @@
 class GenericException(Exception):
+    """[Exception Wrapper]
+
+    Arguments:
+        Exception {[Exception]} -- [Exception class]
+
+    Returns:
+        [GenericException] -- [Exception with specific status code]
+    """
     status_code = 400
 
     def __init__(self, message):
+        """[Initializer]
+
+        Arguments:
+            message {[String]} -- [Message to be sent when exception raises]
+        """
         self.message = message
 
     def to_dict(self):

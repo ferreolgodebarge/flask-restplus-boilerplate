@@ -6,6 +6,18 @@ def create_app(
         os.path.split(os.path.realpath(__name__))[0])[0],
         'settings.cfg'),
 ):
+    """[Create Flask application]
+
+    Keyword Arguments:
+        config_file {[String]} -- [Load a .cfg file if exists to configure app]
+            (default:
+                {os.path.join(os.path.split(os.path.split(
+                    os.path.realpath(__name__))[0])[0],'settings.cfg')}
+            )
+
+    Returns:
+        [type] -- [description]
+    """
     # Init Flask app
     from flask import Flask
     app = Flask(__name__)

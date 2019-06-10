@@ -1,9 +1,4 @@
 def import_blueprints(blueprints):
-    # from importlib import import_module
-    # print(__name__)
-    # blueprint_list = [getattr(import_module(
-    #     f"{__name__}.{blueprint}"
-    # ), "blueprint") for blueprint in blueprints]
     from application.apis.blueprints.version import blueprint as version
     from application.apis.blueprints.v1 import blueprint as v1
     blueprint_list = [

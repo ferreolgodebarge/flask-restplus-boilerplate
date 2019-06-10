@@ -1,6 +1,11 @@
 def init_app(app):
-    from . import resource_1
-    from ..tools import db
+    """[Models initializer]
+
+    Arguments:
+        app {[Flask]} -- [Flask application]
+    """
+    from application.models import resource_1
+    from application.tools import db
     # Create tables
     db.create_all(app=app)
     print(" * Data tables initialized : {}".format(

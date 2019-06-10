@@ -1,9 +1,9 @@
 import uuid as random
-from ...models.resource_1 import (
+from application.models.resource_1 import (
         db,
         Resource_1,
 )
-from ..exceptions.generic import (
+from application.core.exceptions.generic import (
     BackendIssue,
     ConflictError,
     ResourceNotFound,
